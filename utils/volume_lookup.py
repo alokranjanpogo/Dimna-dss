@@ -3,63 +3,82 @@ import pandas as pd
 
 class VolumeLookup:
 
-    def __init__(self, file_path="data/volume_chart.xlsx"):
+    def __init__(self):
 
-        self.df = pd.read_excel(file_path)
+        self.df = pd.read_excel(
+            "data/volume_chart.xlsx",
+            header=None
+        )
 
-        self.volume_dict = {}
+        self.lookup = {}
 
         self.prepare_lookup()
 
     def prepare_lookup(self):
 
-        for _, row in self.df.iterrows():
+        headers = self.df.iloc[5].tolist()
+
+        data = self.df.iloc[6:]
+
+        for _, row in data.iterrows():
 
             try:
-                base_level = float(row.iloc[0])
-                base_volume = float(row.iloc[1])
+
+                base_level = float(row[0])
+                base_volume = float(row[1])
 
             except:
                 continue
 
-            # exact foot level
-            self.volume_dict[round(base_level, 2)] = round(
-                base_volume, 2
+            self.lookup[
+                round(base_level, 2)
+            ] = round(
+                base_volume,
+                2
             )
 
-            columns = list(self.df.columns)
-
-            for col_index in range(2, len(columns)):
+            for i in range(2, len(headers)):
 
                 try:
 
-                    increment = float(columns[col_index])
+                    increment = float(
+                        headers[i]
+                    )
 
-                    additional_volume = float(
-                        row.iloc[col_index]
+                    additional = float(
+                        row[i]
                     )
 
                     level = round(
-                        base_level + increment,
+                        base_level +
+                        increment,
                         2
                     )
 
                     volume = round(
                         base_volume +
-                        additional_volume,
+                        additional,
                         2
                     )
 
-                    self.volume_dict[level] = volume
+                    self.lookup[
+                        level
+                    ] = volume
 
                 except:
                     pass
 
-    def get_volume(self, level):
+    def get_volume(
+        self,
+        level
+    ):
 
-        level = round(level, 2)
+        level = round(
+            level,
+            2
+        )
 
-        if level in self.volume_dict:
-            return self.volume_dict[level]
-
-        return None
+        return self.lookup.get(
+            level
+        )
+        
