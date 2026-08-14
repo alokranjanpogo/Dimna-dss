@@ -6,6 +6,8 @@ st.title(
 
 st.info(
     """
+    Future module.
+
     Compare:
 
     FY23
@@ -14,6 +16,22 @@ st.info(
     FY26
     FY27
 
-    based on rainfall and withdrawal trends.
+    Rainfall and Withdrawal trends.
+    """
+)
+
+st.markdown(
+    """
+    Planned Features:
+
+    ✅ Rainfall comparison
+
+    ✅ Withdrawal comparison
+
+    ✅ Similar year analysis
+
+    ✅ Year-to-date comparison
+
+    ✅ Reservoir planning support
     """
 )
