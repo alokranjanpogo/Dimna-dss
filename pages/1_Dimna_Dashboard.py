@@ -249,3 +249,64 @@ try:
 except:
     pass
 
+st.divider()
+
+st.header("📈 Historical Trend Analysis")
+
+trend_type = st.selectbox(
+    "Select Trend",
+    [
+        "Rainfall",
+        "Withdrawal"
+    ]
+)
+
+try:
+
+    excel_file = "data/rainfall_withdrawal.xlsx"
+
+    if trend_type == "Rainfall":
+
+        df = pd.read_excel(
+            excel_file,
+            sheet_name=0
+        )
+
+    else:
+
+        df = pd.read_excel(
+            excel_file,
+            sheet_name=1
+        )
+
+    st.subheader(
+        f"{trend_type} Dataset Preview"
+    )
+
+    st.dataframe(
+        df.head(20),
+        use_container_width=True
+    )
+
+    numeric_df = df.select_dtypes(
+        include="number"
+    )
+
+    if not numeric_df.empty:
+
+        import plotly.express as px
+
+        fig = px.line(
+            numeric_df,
+            title=f"{trend_type} Historical Trend"
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+
+except Exception as e:
+
+    st.error(e)
+
