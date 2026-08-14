@@ -6,18 +6,17 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("💧 Dimna Reservoir Withdrawal Decision Support System")
+st.title("💧 Dimna Reservoir Withdrawal DSS")
 
 st.markdown("""
-### Purpose
+### Decision Support System
 
-This dashboard helps:
+Use the left sidebar to navigate through:
 
-- Monitor daily Dimna level
-- Track withdrawals
-- Track rainfall
-- Calculate available storage
-- Generate withdrawal alerts
-- Show historical rainfall trends
-- Show historical withdrawal trends
+- Home Dashboard
+- Daily Data Entry
+- Reservoir Calculator
+- Rainfall Trends
+- Withdrawal Trends
+- Historical Comparison
 """)
