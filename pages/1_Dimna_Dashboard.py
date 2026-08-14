@@ -158,15 +158,7 @@ if latest is not None:
             )
         )
 
-    with st.container():
-
-    if buffer_ft > 0:
-
-        st.metric(
-            "Withdrawal Potential",
-            f"{buffer_ft:.2f} ft"
-        )
-
+    
     if allowed:
 
         st.success(
