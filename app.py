@@ -2,21 +2,13 @@ import streamlit as st
 
 st.set_page_config(
     page_title="Dimna DSS",
-    page_icon="💧",
-    layout="wide"
+    layout="wide",
+    page_icon="💧"
 )
 
-st.title("💧 Dimna Reservoir Withdrawal DSS")
+st.title("💧 Dimna Reservoir Decision Support System")
 
 st.markdown("""
-### Decision Support System
-
-Use the left sidebar to navigate through:
-
-- Home Dashboard
-- Daily Data Entry
-- Reservoir Calculator
-- Rainfall Trends
-- Withdrawal Trends
-- Historical Comparison
+Use sidebar → Dimna Dashboard
 """)
+
