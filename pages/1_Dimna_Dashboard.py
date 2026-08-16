@@ -357,7 +357,117 @@ except:
     )
 
 st.divider()
+st.divider()
 
+st.subheader("✏️ Edit Record")
+
+try:
+
+    records = get_all_records()
+
+    if not records.empty:
+
+        edit_index = st.selectbox(
+            "Select Record To Edit",
+            records.index
+        )
+
+        selected_row = records.loc[
+            edit_index
+        ]
+
+        edit_date = st.text_input(
+            "Date",
+            value=str(selected_row["Date"]),
+            key="edit_date"
+        )
+
+        edit_level = st.number_input(
+            "Level",
+            value=float(selected_row["Current_Level"]),
+            key="edit_level"
+        )
+
+        edit_withdrawal = st.number_input(
+            "Withdrawal",
+            value=float(selected_row["Withdrawal_MLD"]),
+            key="edit_withdrawal"
+        )
+
+        edit_rainfall = st.number_input(
+            "Rainfall",
+            value=float(selected_row["Rainfall_mm"]),
+            key="edit_rainfall"
+        )
+
+        edit_remarks = st.text_input(
+            "Remarks",
+            value=str(selected_row["Remarks"]),
+            key="edit_remarks"
+        )
+
+        if st.button("Update Record"):
+
+            update_record(
+                edit_index + 2,
+                edit_date,
+                edit_level,
+                edit_withdrawal,
+                edit_rainfall,
+                edit_remarks
+            )
+
+            st.success(
+                "Record Updated Successfully"
+            )
+
+            st.rerun()
+
+except Exception as e:
+
+    st.error(
+        f"Edit Error: {e}"
+    )
+
+st.divider()
+
+st.subheader("🗑 Delete Record")
+
+try:
+
+    records = get_all_records()
+
+    if not records.empty:
+
+        delete_index = st.selectbox(
+            "Select Record To Delete",
+            records.index,
+            key="delete_index"
+        )
+
+        st.warning(
+            "Deleted records cannot be recovered."
+        )
+
+        if st.button(
+            "Delete Selected Record"
+        ):
+
+            delete_record(
+                delete_index + 2
+            )
+
+            st.success(
+                "Record Deleted Successfully"
+            )
+
+            st.rerun()
+
+except Exception as e:
+
+    st.error(
+        f"Delete Error: {e}"
+    )
 # ==================================================
 # TREND ANALYSIS
 # ==================================================
