@@ -186,11 +186,27 @@ alert = get_alert(
 # KPI CARDS
 # ==================================================
 
+target_volume = get_target_volume(
+    date.today()
+)
+
+withdrawal_potential = get_withdrawal_potential(
+    live_level,
+    date.today()
+)
+
+status = (
+    "✅ Allowed"
+    if allowed
+    else
+    "❌ Not Allowed"
+)
+
 st.subheader(
     "📊 Live Reservoir Status"
 )
 
-k1, k2, k3, k4, k5 = st.columns(5)
+k1, k2, k3, k4, k5, k6 = st.columns(6)
 
 with k1:
 
@@ -202,29 +218,36 @@ with k1:
 with k2:
 
     st.metric(
-        "Rule Level",
+        "Target Level",
         f"{rule_level:.2f} ft"
     )
 
 with k3:
 
     st.metric(
-        "Available Buffer",
-        f"{buffer_ft:.2f} ft"
+        "Current Storage",
+        f"{current_volume:.2f} MG"
     )
 
 with k4:
 
     st.metric(
-        "Current Volume (MG)",
-        current_volume
+        "Target Storage",
+        f"{target_volume:.2f} MG"
     )
 
 with k5:
 
     st.metric(
-        "Available Storage (MG)",
-        available_storage
+        "Withdrawal Potential",
+        f"{withdrawal_potential:.2f} MG"
+    )
+
+with k6:
+
+    st.metric(
+        "Status",
+        status
     )
 
 st.divider()
@@ -234,20 +257,24 @@ st.divider()
 # ==================================================
 
 st.subheader(
-    "📋 Today's Reservoir Decision"
+    "📋 Reservoir Decision"
 )
 
 if allowed:
 
     st.success(
         f"""
+### ✅ WITHDRAWAL ALLOWED
+
 Current Level : {live_level:.2f} ft
 
-Rule Level : {rule_level:.2f} ft
+Target Level : {rule_level:.2f} ft
 
-Available Buffer : {buffer_ft:.2f} ft
+Current Storage : {current_volume:.2f} MG
 
-✅ WITHDRAWAL ALLOWED
+Target Storage : {target_volume:.2f} MG
+
+Withdrawal Potential : {withdrawal_potential:.2f} MG
 """
     )
 
@@ -255,15 +282,15 @@ else:
 
     st.error(
         f"""
+### ❌ WITHDRAWAL NOT ALLOWED
+
 Current Level : {live_level:.2f} ft
 
-Rule Level : {rule_level:.2f} ft
+Target Level : {rule_level:.2f} ft
 
-❌ WITHDRAWAL NOT ALLOWED
-"""
-    )
+Current Storage : {current_volume:.2f} MG
 
-st.divider()
+Target Storage : {
 
 # ==================================================
 # ALERTS
