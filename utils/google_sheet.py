@@ -17,12 +17,15 @@ def connect_sheet():
 
     secret_data = st.secrets["gcp_service_account"]
 
-    # Handle if secrets loaded as string
+    # Handle secret stored as string
     if isinstance(secret_data, str):
+
         service_account_info = ast.literal_eval(
             secret_data
         )
+
     else:
+
         service_account_info = secret_data
 
     creds = Credentials.from_service_account_info(
@@ -30,7 +33,9 @@ def connect_sheet():
         scopes=SCOPES
     )
 
-    client = gspread.authorize(creds)
+    client = gspread.authorize(
+        creds
+    )
 
     workbook = client.open(
         "Dimna DSS Database"
@@ -58,13 +63,15 @@ def add_daily_record(
 
     sheet = get_daily_sheet()
 
-    sheet.append_row([
-        str(entry_date),
-        level,
-        withdrawal,
-        rainfall,
-        remarks
-    ])
+    sheet.append_row(
+        [
+            str(entry_date),
+            level,
+            withdrawal,
+            rainfall,
+            remarks
+        ]
+    )
 
 
 def get_all_records():
@@ -73,7 +80,9 @@ def get_all_records():
 
     records = sheet.get_all_records()
 
-    return pd.DataFrame(records)
+    return pd.DataFrame(
+        records
+    )
 
 
 def get_latest_record():
@@ -81,25 +90,28 @@ def get_latest_record():
     df = get_all_records()
 
     if df.empty:
-        return None
+        return {
+            "Current_Level": 527.35,
+            "Withdrawal_MLD": 0
+        }
 
     return df.iloc[-1]
 
 
-def test_connection():
+def check_connection():
 
     try:
 
         workbook = connect_sheet()
 
-        return (
-            True,
-            f"Connected to: {workbook.title}"
-        )
+        return True
 
     except Exception as e:
 
-        return (
-            False,
-            str(e)
+        st.error(
+            f"Google Sheet Error: {e}"
         )
+
+        return False
+
+
