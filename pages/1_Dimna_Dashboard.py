@@ -290,8 +290,13 @@ Target Level : {rule_level:.2f} ft
 
 Current Storage : {current_volume:.2f} MG
 
-Target Storage : {
+Target Storage : {target_volume:.2f} MG
 
+Withdrawal Potential : {withdrawal_potential:.2f} MG
+"""
+    )
+
+st.divider()
 # ==================================================
 # ALERTS
 # ==================================================
