@@ -226,21 +226,21 @@ with k3:
 
     st.metric(
         "Current Storage",
-        f"{current_volume:.2f} MG"
+        f"{current_volume:,.0f} MG"
     )
 
 with k4:
 
     st.metric(
         "Target Storage",
-        f"{target_volume:.2f} MG"
+        f"{target_volume:,.0f} MG"
     )
 
 with k5:
 
     st.metric(
         "Withdrawal Potential",
-        f"{withdrawal_potential:.2f} MG"
+        f"{withdrawal_potential:,.0f} MG"
     )
 
 with k6:
