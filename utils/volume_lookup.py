@@ -5,20 +5,22 @@ class VolumeLookup:
 
     def __init__(self):
 
-        self.volume_table = {}
+        self.lookup = {}
 
-        self.load_volume_data()
+        self.load_volume_chart()
 
-    def load_volume_data(self):
+    def load_volume_chart(self):
 
         df = pd.read_excel(
             "data/volume_chart.xlsx",
             header=None
         )
 
-        headers = df.iloc[0].tolist()
+        headers = df.iloc[5].tolist()
 
-        for _, row in df.iterrows():
+        data = df.iloc[6:]
+
+        for _, row in data.iterrows():
 
             try:
 
@@ -28,14 +30,18 @@ class VolumeLookup:
             except:
                 continue
 
-            self.volume_table[
+            # exact level
+            self.lookup[
                 round(base_level, 2)
             ] = round(
                 base_volume,
                 2
             )
 
-            for col in range(2, len(headers)):
+            for col in range(
+                2,
+                len(headers)
+            ):
 
                 try:
 
@@ -43,7 +49,7 @@ class VolumeLookup:
                         headers[col]
                     )
 
-                    additional_volume = float(
+                    add_volume = float(
                         row[col]
                     )
 
@@ -54,31 +60,32 @@ class VolumeLookup:
 
                     volume = round(
                         base_volume +
-                        additional_volume,
+                        add_volume,
                         2
                     )
 
-                    self.volume_table[
+                    self.lookup[
                         level
                     ] = volume
 
                 except:
                     pass
 
-    def get_volume(self, level):
+    def get_volume(
+        self,
+        level
+    ):
 
         level = round(
             float(level),
             2
         )
 
-        return self.volume_table.get(level)
-
-    def volume_exists(self, level):
-
-        level = round(
-            float(level),
-            2
+        return self.lookup.get(
+            level,
+            None
         )
 
-        return level in self.volume_table
+    def get_all_levels(self):
+
+        return self.lookup
