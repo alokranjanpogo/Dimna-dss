@@ -5,7 +5,9 @@ from datetime import date
 from utils.google_sheet import (
     add_daily_record,
     get_latest_record,
-    get_all_records
+    get_all_records,
+    update_record,
+    delete_record
 )
 
 from utils.calculations import (
