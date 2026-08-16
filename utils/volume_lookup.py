@@ -9,10 +9,7 @@ class VolumeLookup:
 
         self.load_volume_chart()
 
-        print(
-            "Levels Loaded:",
-            len(self.lookup)
-        )
+        print("Levels Loaded:", len(self.lookup))
 
     def load_volume_chart(self):
 
@@ -21,11 +18,12 @@ class VolumeLookup:
             header=None
         )
 
-        # Actual chart headers
-        headers = df.iloc[6].tolist()
+        print(df.head(15))
 
-        # Actual volume data starts after that
-        data = df.iloc[7:]
+        # Try actual header row
+        headers = df.iloc[5].tolist()
+
+        data = df.iloc[6:]
 
         for _, row in data.iterrows():
 
@@ -34,7 +32,7 @@ class VolumeLookup:
                 base_level = float(row.iloc[0])
                 base_volume = float(row.iloc[1])
 
-            except Exception:
+            except:
                 continue
 
             self.lookup[
@@ -71,13 +69,10 @@ class VolumeLookup:
 
                     self.lookup[level] = volume
 
-                except Exception:
+                except:
                     continue
 
-    def get_volume(
-        self,
-        level
-    ):
+    def get_volume(self, level):
 
         try:
 
@@ -96,11 +91,6 @@ class VolumeLookup:
 
             return self.lookup[nearest]
 
-        except Exception:
+        except:
 
             return 0
-
-    def get_all_levels(self):
-
-        return self.lookup
-        
