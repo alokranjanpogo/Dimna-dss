@@ -119,3 +119,36 @@ def get_latest_record():
             "Current_Level": 527.35,
             "Withdrawal_MLD": 0
         }
+
+def update_record(
+    row_number,
+    entry_date,
+    level,
+    withdrawal,
+    rainfall,
+    remarks
+):
+
+    sheet = get_daily_sheet()
+
+    sheet.update(
+        f"A{row_number}:E{row_number}",
+        [[
+            str(entry_date),
+            level,
+            withdrawal,
+            rainfall,
+            remarks
+        ]]
+    )
+
+
+def delete_record(
+    row_number
+):
+
+    sheet = get_daily_sheet()
+
+    sheet.delete_rows(
+        row_number
+    )
