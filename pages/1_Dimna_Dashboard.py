@@ -26,44 +26,42 @@ st.set_page_config(
 
 st.title("💧 Dimna Reservoir Decision Support System")
 
-# ==================================================
+# =====================================================
 # DAILY ENTRY
-# ==================================================
+# =====================================================
 
 st.subheader("📝 Daily Operations Entry")
 
-c1, c2, c3 = st.columns(3)
+col1, col2, col3 = st.columns(3)
 
-with c1:
-    entry_date = st.date_input(
-        "Date"
-    )
+with col1:
+    entry_date = st.date_input("Date")
 
-with c2:
-    current_level = st.number_input(
+with col2:
+    current_level_input = st.number_input(
         "Current Level (ft)",
-        min_value=508.00,
-        max_value=531.00,
+        min_value=508.0,
+        max_value=531.0,
         step=0.01
     )
 
-with c3:
-    withdrawal = st.number_input(
+with col3:
+    withdrawal_input = st.number_input(
         "Withdrawal (MLD)",
         min_value=0.0,
         step=1.0
     )
 
-c4, c5 = st.columns(2)
+col4, col5 = st.columns(2)
 
-with c4:
-    rainfall = st.number_input(
+with col4:
+    rainfall_input = st.number_input(
         "Rainfall (mm)",
         min_value=0.0
     )
 
-with c5:
-    remarks = st.text_input(
+with col5:
+    remarks_input = st.text_input(
         "Remarks"
     )
 
@@ -73,14 +71,14 @@ if st.button("✅ Save Record"):
 
         add_daily_record(
             entry_date,
-            current_level,
-            withdrawal,
-            rainfall,
-            remarks
+            current_level_input,
+            withdrawal_input,
+            rainfall_input,
+            remarks_input
         )
 
         st.success(
-            "Record Saved Successfully"
+            "Record saved successfully."
         )
 
     except Exception as e:
@@ -91,15 +89,169 @@ if st.button("✅ Save Record"):
 
 st.divider()
 
-# ==================================================
-# LIVE DATA
-# ==================================================
+# =====================================================
+# GET LATEST DATA
+# =====================================================
 
 try:
 
     latest = get_latest_record()
 
-except:
+    if latest is None:
+
+        latest = {
+            "Current_Level": 527.35,
+            "Withdrawal_MLD": 0
+        }
+
+except Exception:
 
     latest = {
-        "Current_
+        "Current_Level": 527.35,
+        "Withdrawal_MLD": 0
+    }
+
+live_level = float(
+    latest["Current_Level"]
+)
+
+rule_level = get_rule_level(
+    date.today()
+)
+
+try:
+    current_volume = get_current_volume(
+        live_level
+    )
+except:
+    current_volume = 0
+
+try:
+    available_storage = get_available_storage(
+        live_level,
+        date.today()
+    )
+except:
+    available_storage = 0
+
+try:
+    buffer_ft = get_buffer_ft(
+        live_level,
+        date.today()
+    )
+except:
+    buffer_ft = 0
+
+try:
+    allowed = withdrawal_allowed(
+        live_level,
+        date.today()
+    )
+except:
+    allowed = False
+
+alert = get_alert(
+    live_level
+)
+
+# =====================================================
+# KPI SECTION
+# =====================================================
+
+st.subheader("📊 Live Reservoir Status")
+
+k1, k2, k3, k4, k5 = st.columns(5)
+
+with k1:
+    st.metric(
+        "Current Level",
+        f"{live_level:.2f} ft"
+    )
+
+with k2:
+    st.metric(
+        "Rule Level",
+        f"{rule_level:.2f} ft"
+    )
+
+with k3:
+    st.metric(
+        "Buffer",
+        f"{buffer_ft:.2f} ft"
+    )
+
+with k4:
+    st.metric(
+        "Current Volume",
+        current_volume
+    )
+
+with k5:
+    st.metric(
+        "Available Storage",
+        available_storage
+    )
+
+# =====================================================
+# DECISION BOX
+# =====================================================
+
+st.subheader("📋 Today's Decision")
+
+if allowed:
+
+    st.success(
+        f"""
+Current Level : {live_level:.2f} ft
+
+Rule Level : {rule_level:.2f} ft
+
+Buffer Available : {buffer_ft:.2f} ft
+
+✅ WITHDRAWAL ALLOWED
+"""
+    )
+
+else:
+
+    st.error(
+        f"""
+Current Level : {live_level:.2f} ft
+
+Rule Level : {rule_level:.2f} ft
+
+❌ WITHDRAWAL NOT ALLOWED
+"""
+    )
+
+st.divider()
+
+# =====================================================
+# ALERTS
+# =====================================================
+
+if live_level >= 529.5:
+
+    st.error(
+        f"""
+🔴 HIGH LEVEL ALERT
+
+Current Level : {live_level:.2f} ft
+
+MANDATORY WITHDRAWAL : 150 MLD
+"""
+    )
+
+elif live_level >= 529:
+
+    st.warning(
+        "🟡 Reservoir Approaching Alert Level"
+    )
+
+else:
+
+    st.success(
+        "🟢 Reservoir Operating Normally"
+    )
+
+st.divider
