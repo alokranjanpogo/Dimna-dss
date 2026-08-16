@@ -10,7 +10,7 @@ st.title("📊 Historical Comparison")
 st.subheader("🌧 Monthly Rainfall Comparison")
 
 rain_df = pd.read_excel(
-    "rainfall_withdrawal.xlsx",
+    "data/rainfall_withdrawal.xlsx",
     sheet_name=0,
     header=None
 )
