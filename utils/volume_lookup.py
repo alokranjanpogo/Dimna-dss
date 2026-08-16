@@ -9,8 +9,6 @@ class VolumeLookup:
 
         self.load_volume_chart()
 
-        print("Levels Loaded:", len(self.lookup))
-
     def load_volume_chart(self):
 
         df = pd.read_excel(
@@ -18,23 +16,25 @@ class VolumeLookup:
             header=None
         )
 
-        print(df.head(15))
-
-        # Try actual header row
+        # Header row containing
+        # 1, 0.9, 0.8 ... 0.01
         headers = df.iloc[5].tolist()
 
+        # Volume data starts after that
         data = df.iloc[6:]
 
         for _, row in data.iterrows():
 
             try:
 
-                base_level = float(row.iloc[0])
-                base_volume = float(row.iloc[1])
+                base_level = float(row[0])
+
+                base_volume = float(row[1])
 
             except:
                 continue
 
+            # Exact level volume
             self.lookup[
                 round(base_level, 2)
             ] = round(
@@ -42,10 +42,7 @@ class VolumeLookup:
                 2
             )
 
-            for col in range(
-                2,
-                len(headers)
-            ):
+            for col in range(2, len(headers)):
 
                 try:
 
@@ -54,7 +51,7 @@ class VolumeLookup:
                     )
 
                     add_volume = float(
-                        row.iloc[col]
+                        row[col]
                     )
 
                     level = round(
@@ -67,30 +64,26 @@ class VolumeLookup:
                         2
                     )
 
-                    self.lookup[level] = volume
+                    self.lookup[
+                        level
+                    ] = volume
 
                 except:
                     continue
 
     def get_volume(self, level):
 
-        try:
+        level = round(
+            float(level),
+            2
+        )
 
-            level = round(
-                float(level),
-                2
-            )
+        if level in self.lookup:
+            return self.lookup[level]
 
-            if level in self.lookup:
-                return self.lookup[level]
+        nearest = min(
+            self.lookup.keys(),
+            key=lambda x: abs(x - level)
+        )
 
-            nearest = min(
-                self.lookup.keys(),
-                key=lambda x: abs(x - level)
-            )
-
-            return self.lookup[nearest]
-
-        except:
-
-            return 0
+        return self.lookup[nearest]
