@@ -41,20 +41,31 @@ MONTHS = [
     "Mar"
 ]
 
-selected_fys = st.multiselect(
-    "Select Financial Years",
-    ALL_FY,
-    default=["FY23", "FY24", "FY25"]
-)
+# =====================================
+# FILTERS
+# =====================================
 
-selected_month = st.selectbox(
-    "Select Month",
-    ["All"] + MONTHS
-)
+col1, col2 = st.columns(2)
 
-# ==========================================
-# RAINFALL COMPARISON
-# ==========================================
+with col1:
+
+    selected_fys = st.multiselect(
+        "Select Financial Years",
+        ALL_FY,
+        default=["FY23", "FY24", "FY25"]
+    )
+
+with col2:
+
+    selected_months = st.multiselect(
+        "Select Months",
+        MONTHS,
+        default=MONTHS
+    )
+
+# =====================================
+# RAINFALL
+# =====================================
 
 st.subheader("🌧 Rainfall Comparison")
 st.caption("Unit : mm")
@@ -113,23 +124,33 @@ for fy in selected_fys:
 
     rain_chart[fy] = monthly_values
 
-if selected_month != "All":
+filtered_rain = rain_chart.loc[
+    selected_months
+]
 
-    st.bar_chart(
-        rain_chart.loc[[selected_month]]
-    )
+st.line_chart(
+    filtered_rain
+)
 
-else:
+# =====================================
+# RAINFALL SUMMARY
+# =====================================
 
-    st.line_chart(
-        rain_chart
+st.write("### Rainfall Summary")
+
+if not filtered_rain.empty:
+
+    st.dataframe(
+        filtered_rain.sum().to_frame(
+            "Total Rainfall (mm)"
+        )
     )
 
 st.divider()
 
-# ==========================================
-# WITHDRAWAL COMPARISON
-# ==========================================
+# =====================================
+# WITHDRAWAL
+# =====================================
 
 st.subheader("💦 Withdrawal Comparison")
 st.caption("Unit : MLD")
@@ -188,52 +209,24 @@ for fy in selected_fys:
 
     withdraw_chart[fy] = monthly_values
 
-if selected_month != "All":
+filtered_withdraw = withdraw_chart.loc[
+    selected_months
+]
 
-    st.bar_chart(
-        withdraw_chart.loc[[selected_month]]
-    )
+st.line_chart(
+    filtered_withdraw
+)
 
-else:
+# =====================================
+# WITHDRAWAL SUMMARY
+# =====================================
 
-    st.line_chart(
-        withdraw_chart
-    )
+st.write("### Withdrawal Summary")
 
-st.divider()
+if not filtered_withdraw.empty:
 
-# ==========================================
-# SUMMARY
-# ==========================================
-
-st.subheader("📌 Summary")
-
-c1, c2 = st.columns(2)
-
-with c1:
-
-    st.write(
-        "### Total Rainfall (mm)"
-    )
-
-    if not rain_chart.empty:
-
-        st.dataframe(
-            rain_chart.sum().to_frame(
-                "Rainfall (mm)"
-            )
+    st.dataframe(
+        filtered_withdraw.mean().to_frame(
+            "Average Withdrawal (MLD)"
         )
-
-with c2:
-
-    st.write(
-        "### Average Withdrawal (MLD)"
     )
-
-    if not withdraw_chart.empty:
-
-        st.dataframe(
-            withdraw_chart.mean().to_frame(
-                "Withdrawal (MLD)"
-            )
-        )
