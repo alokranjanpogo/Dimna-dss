@@ -8,122 +8,164 @@ st.set_page_config(
 
 st.title("📊 Historical Comparison")
 
-file_path = "data/rainfall_withdrawal.xlsx"
+FILE_PATH = "data/rainfall_withdrawal.xlsx"
 
-# =====================================
+AVAILABLE_FY = [
+    "FY23",
+    "FY24",
+    "FY25",
+    "FY26",
+    "FY27"
+]
+
+ALL_FY = [
+    "FY23",
+    "FY24",
+    "FY25",
+    "FY26",
+    "FY27",
+    "FY28",
+    "FY29",
+    "FY30",
+    "FY31",
+    "FY32",
+    "FY33"
+]
+
+selected_fys = st.multiselect(
+    "Select Financial Years",
+    ALL_FY,
+    default=["FY23", "FY24", "FY25"]
+)
+
+# ========================================
 # RAINFALL COMPARISON
-# =====================================
+# ========================================
 
-st.subheader("🌧 Rainfall Comparison (FY23-FY27)")
+st.subheader("🌧 Rainfall Comparison")
+st.caption("Unit: mm")
 
 rain_df = pd.read_excel(
-    file_path,
+    FILE_PATH,
     sheet_name=0,
     header=None
 )
 
-rain_compare = pd.DataFrame()
+rain_cols = {
+    "FY27": 1,
+    "FY26": 3,
+    "FY25": 5,
+    "FY24": 7,
+    "FY23": 9
+}
 
-rain_compare["FY27"] = pd.to_numeric(
-    rain_df.iloc[4:, 1],
-    errors="coerce"
-)
+rain_chart = pd.DataFrame()
 
-rain_compare["FY26"] = pd.to_numeric(
-    rain_df.iloc[4:, 3],
-    errors="coerce"
-)
+for fy in selected_fys:
 
-rain_compare["FY25"] = pd.to_numeric(
-    rain_df.iloc[4:, 5],
-    errors="coerce"
-)
+    if fy in rain_cols:
 
-rain_compare["FY24"] = pd.to_numeric(
-    rain_df.iloc[4:, 7],
-    errors="coerce"
-)
+        rain_chart[fy] = pd.to_numeric(
+            rain_df.iloc[4:, rain_cols[fy]],
+            errors="coerce"
+        ).fillna(0)
 
-rain_compare["FY23"] = pd.to_numeric(
-    rain_df.iloc[4:, 9],
-    errors="coerce"
-)
+    else:
 
-rain_compare = rain_compare.fillna(0)
+        st.warning(
+            f"{fy} : NA - Rainfall data not available."
+        )
 
-st.line_chart(rain_compare)
+if not rain_chart.empty:
+
+    st.line_chart(rain_chart)
+
+else:
+
+    st.info(
+        "No rainfall data available."
+    )
 
 st.divider()
 
-# =====================================
+# ========================================
 # WITHDRAWAL COMPARISON
-# =====================================
+# ========================================
 
-st.subheader("💦 Withdrawal Comparison (FY23-FY27)")
+st.subheader("💦 Withdrawal Comparison")
+st.caption("Unit: MLD")
 
 withdraw_df = pd.read_excel(
-    file_path,
+    FILE_PATH,
     sheet_name=1,
     header=None
 )
 
-withdraw_compare = pd.DataFrame()
+withdraw_cols = {
+    "FY23": 1,
+    "FY24": 2,
+    "FY25": 3,
+    "FY26": 4,
+    "FY27": 5
+}
 
-withdraw_compare["FY23"] = pd.to_numeric(
-    withdraw_df.iloc[2:, 1],
-    errors="coerce"
-)
+withdraw_chart = pd.DataFrame()
 
-withdraw_compare["FY24"] = pd.to_numeric(
-    withdraw_df.iloc[2:, 2],
-    errors="coerce"
-)
+for fy in selected_fys:
 
-withdraw_compare["FY25"] = pd.to_numeric(
-    withdraw_df.iloc[2:, 3],
-    errors="coerce"
-)
+    if fy in withdraw_cols:
 
-withdraw_compare["FY26"] = pd.to_numeric(
-    withdraw_df.iloc[2:, 4],
-    errors="coerce"
-)
+        withdraw_chart[fy] = pd.to_numeric(
+            withdraw_df.iloc[2:, withdraw_cols[fy]],
+            errors="coerce"
+        ).fillna(0)
 
-withdraw_compare["FY27"] = pd.to_numeric(
-    withdraw_df.iloc[2:, 5],
-    errors="coerce"
-)
+    else:
 
-withdraw_compare = withdraw_compare.fillna(0)
+        st.warning(
+            f"{fy} : NA - Withdrawal data not available."
+        )
 
-st.line_chart(withdraw_compare)
+if not withdraw_chart.empty:
+
+    st.line_chart(withdraw_chart)
+
+else:
+
+    st.info(
+        "No withdrawal data available."
+    )
 
 st.divider()
 
-# =====================================
+# ========================================
 # SUMMARY
-# =====================================
+# ========================================
 
-st.subheader("📌 Summary Statistics")
+st.subheader("📌 Summary")
 
 col1, col2 = st.columns(2)
 
 with col1:
 
-    st.write("### Rainfall Totals")
+    if not rain_chart.empty:
 
-    st.dataframe(
-        rain_compare.sum().to_frame(
-            "Total Rainfall"
+        st.write("### Total Rainfall (mm)")
+
+        st.dataframe(
+            rain_chart.sum().to_frame(
+                "Total Rainfall (mm)"
+            )
         )
-    )
 
 with col2:
 
-    st.write("### Average Withdrawal")
+    if not withdraw_chart.empty:
 
-    st.dataframe(
-        withdraw_compare.mean().to_frame(
-            "Average Withdrawal"
+        st.write("### Average Withdrawal (MLD)")
+
+        st.dataframe(
+            withdraw_chart.mean().to_frame(
+                "Average Withdrawal (MLD)"
+            )
         )
-    )
