@@ -9,6 +9,11 @@ class VolumeLookup:
 
         self.load_volume_chart()
 
+        print(
+            "Volume Lookup Records:",
+            len(self.lookup)
+        )
+
     def load_volume_chart(self):
 
         df = pd.read_excel(
@@ -24,13 +29,12 @@ class VolumeLookup:
 
             try:
 
-                base_level = float(row[0])
-                base_volume = float(row[1])
+                base_level = float(row.iloc[0])
+                base_volume = float(row.iloc[1])
 
             except:
                 continue
 
-            # exact level
             self.lookup[
                 round(base_level, 2)
             ] = round(
@@ -50,7 +54,7 @@ class VolumeLookup:
                     )
 
                     add_volume = float(
-                        row[col]
+                        row.iloc[col]
                     )
 
                     level = round(
@@ -69,22 +73,28 @@ class VolumeLookup:
                     ] = volume
 
                 except:
-                    pass
+                    continue
 
     def get_volume(
         self,
         level
     ):
 
-        level = round(
-            float(level),
-            2
-        )
+        try:
 
-        return self.lookup.get(
-            level,
-            None
-        )
+            level = round(
+                float(level),
+                2
+            )
+
+            return self.lookup.get(
+                level,
+                None
+            )
+
+        except:
+
+            return None
 
     def get_all_levels(self):
 
