@@ -16,74 +16,96 @@ class VolumeLookup:
             header=None
         )
 
-        # Header row containing
-        # 1, 0.9, 0.8 ... 0.01
-        headers = df.iloc[5].tolist()
+        headers = [
+            1,
+            0.9,
+            0.8,
+            0.7,
+            0.6,
+            0.5,
+            0.4,
+            0.3,
+            0.2,
+            0.1,
+            0.09,
+            0.08,
+            0.07,
+            0.06,
+            0.05,
+            0.04,
+            0.03,
+            0.02,
+            0.01
+        ]
 
-        # Volume data starts after that
         data = df.iloc[6:]
 
         for _, row in data.iterrows():
 
             try:
 
-                base_level = float(row[0])
+                level = float(row[0])
 
                 base_volume = float(row[1])
 
             except:
                 continue
 
-            # Exact level volume
             self.lookup[
-                round(base_level, 2)
-            ] = round(
-                base_volume,
-                2
-            )
+                round(level, 2)
+            ] = base_volume
 
-            for col in range(2, len(headers)):
+            for i, increment in enumerate(headers):
 
                 try:
 
-                    increment = float(
-                        headers[col]
-                    )
-
                     add_volume = float(
-                        row[col]
+                        row[i + 2]
                     )
 
-                    level = round(
-                        base_level + increment,
+                    exact_level = round(
+                        level + increment,
                         2
                     )
 
-                    volume = round(
-                        base_volume + add_volume,
+                    exact_volume = round(
+                        base_volume +
+                        add_volume,
                         2
                     )
 
                     self.lookup[
-                        level
-                    ] = volume
+                        exact_level
+                    ] = exact_volume
 
                 except:
-                    continue
+                    pass
 
     def get_volume(self, level):
 
-        level = round(
-            float(level),
-            2
-        )
+        try:
 
-        if level in self.lookup:
-            return self.lookup[level]
+            level = round(
+                float(level),
+                2
+            )
 
-        nearest = min(
-            self.lookup.keys(),
-            key=lambda x: abs(x - level)
-        )
+            if level in self.lookup:
 
-        return self.lookup[nearest]
+                return self.lookup[level]
+
+            nearest = min(
+                self.lookup.keys(),
+                key=lambda x: abs(x - level)
+            )
+
+            return self.lookup[nearest]
+
+        except:
+
+            return 0
+
+    def get_all_levels(self):
+
+        return self.lookup
+        
