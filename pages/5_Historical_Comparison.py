@@ -57,7 +57,7 @@ st.divider()
 st.subheader("💦 Monthly Withdrawal Comparison")
 
 with_df = pd.read_excel(
-    "rainfall_withdrawal.xlsx",
+    "data/rainfall_withdrawal.xlsx",
     sheet_name=1,
     header=None
 )
