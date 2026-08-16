@@ -9,6 +9,11 @@ class VolumeLookup:
 
         self.load_volume_chart()
 
+        print(
+            "Levels Loaded:",
+            len(self.lookup)
+        )
+
     def load_volume_chart(self):
 
         df = pd.read_excel(
@@ -16,9 +21,11 @@ class VolumeLookup:
             header=None
         )
 
-        headers = df.iloc[5].tolist()
+        # Actual chart headers
+        headers = df.iloc[6].tolist()
 
-        data = df.iloc[6:]
+        # Actual volume data starts after that
+        data = df.iloc[7:]
 
         for _, row in data.iterrows():
 
@@ -62,9 +69,7 @@ class VolumeLookup:
                         2
                     )
 
-                    self.lookup[
-                        level
-                    ] = volume
+                    self.lookup[level] = volume
 
                 except Exception:
                     continue
@@ -98,3 +103,4 @@ class VolumeLookup:
     def get_all_levels(self):
 
         return self.lookup
+        
