@@ -12,6 +12,9 @@ SCOPES = [
 @st.cache_resource
 def connect_sheet():
 
+    # TEMPORARY DEBUG
+    st.write("Available Secrets:", dict(st.secrets))
+
     creds = Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
         scopes=SCOPES
