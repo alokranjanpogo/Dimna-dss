@@ -312,9 +312,11 @@ if live_level >= 529.5:
         f"""
 🔴 HIGH LEVEL ALERT
 
+Season : {season}
+
 Current Level : {live_level:.2f} ft
 
-MANDATORY WITHDRAWAL : 150 MLD
+Mandatory Withdrawal : 150 MLD
 """
     )
 
@@ -324,20 +326,25 @@ elif live_level >= 529:
         f"""
 🟡 ALERT
 
+Season : {season}
+
 Current Level : {live_level:.2f} ft
 
-Approaching alert level.
+Approaching Alert Level
 """
     )
 
 else:
 
     st.success(
-        "🟢 Reservoir Operating Normally"
+        f"""
+🟢 Reservoir Operating Normally
+
+Season : {season}
+
+Withdrawal Potential : {withdrawal_potential:,.0f} MG
+"""
     )
-
-st.divider()
-
 # ==================================================
 # RESERVOIR GAUGE
 # ==================================================
