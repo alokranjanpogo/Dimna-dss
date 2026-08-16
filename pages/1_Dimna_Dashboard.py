@@ -124,7 +124,7 @@ live_level = float(
 )
 
 rule_level = get_rule_level(
-    date.today()
+    entry_date
 )
 
 try:
@@ -145,7 +145,7 @@ try:
     available_storage = round(
         get_available_storage(
             live_level,
-            date.today()
+            entry_date
         ),
         2
     )
@@ -159,7 +159,7 @@ try:
     buffer_ft = round(
         get_buffer_ft(
             live_level,
-            date.today()
+            entry_date
         ),
         2
     )
@@ -172,7 +172,7 @@ try:
 
     allowed = withdrawal_allowed(
         live_level,
-        date.today()
+        entry_date
     )
 
 except:
@@ -183,7 +183,7 @@ alert = get_alert(
     live_level
 )
 season = get_season(
-    date.today()
+    entry_date
 )
 
 # ==================================================
@@ -191,12 +191,12 @@ season = get_season(
 # ==================================================
 
 target_volume = get_target_volume(
-    date.today()
+   entry_date
 )
 
 withdrawal_potential = get_withdrawal_potential(
     live_level,
-    date.today()
+    entry_date
 )
 
 status = (
