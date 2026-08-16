@@ -1,6 +1,6 @@
 import streamlit as st
-import gspread
 import pandas as pd
+import gspread
 import ast
 
 from google.oauth2.service_account import Credentials
@@ -15,26 +15,39 @@ SCOPES = [
 @st.cache_resource
 def connect_sheet():
 
-    secret_data = st.secrets["gcp_service_account"]
+    secret_data = st.secrets[
+        "gcp_service_account"
+    ]
 
-    # Handle secret stored as string
-    if isinstance(secret_data, str):
+    if isinstance(
+        secret_data,
+        str
+    ):
 
-        service_account_info = ast.literal_eval(
-            secret_data
+        service_account_info = (
+            ast.literal_eval(
+                secret_data
+            )
         )
 
     else:
 
-        service_account_info = secret_data
+        service_account_info = (
+            secret_data
+        )
 
-    creds = Credentials.from_service_account_info(
-        service_account_info,
-        scopes=SCOPES
+    creds = (
+        Credentials
+        .from_service_account_info(
+            service_account_info,
+            scopes=SCOPES
+        )
     )
 
-    client = gspread.authorize(
-        creds
+    client = (
+        gspread.authorize(
+            creds
+        )
     )
 
     workbook = client.open(
@@ -87,31 +100,22 @@ def get_all_records():
 
 def get_latest_record():
 
-    df = get_all_records()
+    try:
 
-    if df.empty:
+        df = get_all_records()
+
+        if df.empty:
+
+            return {
+                "Current_Level": 527.35,
+                "Withdrawal_MLD": 0
+            }
+
+        return df.iloc[-1]
+
+    except:
+
         return {
             "Current_Level": 527.35,
             "Withdrawal_MLD": 0
         }
-
-    return df.iloc[-1]
-
-
-def check_connection():
-
-    try:
-
-        workbook = connect_sheet()
-
-        return True
-
-    except Exception as e:
-
-        st.error(
-            f"Google Sheet Error: {e}"
-        )
-
-        return False
-
-
