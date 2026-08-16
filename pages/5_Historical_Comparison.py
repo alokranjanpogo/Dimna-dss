@@ -3,90 +3,105 @@ import pandas as pd
 
 st.title("📊 Historical Comparison")
 
-# Rainfall Comparison
+# ==============================
+# RAINFALL COMPARISON
+# ==============================
 
-st.subheader(
-    "Rainfall FY Comparison"
-)
+st.subheader("🌧 Monthly Rainfall Comparison")
 
-rainfall_df = pd.read_excel(
-    "data/rainfall_withdrawal.xlsx",
+rain_df = pd.read_excel(
+    "rainfall_withdrawal.xlsx",
     sheet_name=0,
     header=None
 )
 
-comparison = pd.DataFrame()
-
-comparison["FY27"] = pd.to_numeric(
-    rainfall_df.iloc[4:, 2],
+date_col = pd.to_datetime(
+    rain_df.iloc[4:, 0],
+    unit="D",
+    origin="1899-12-30",
     errors="coerce"
 )
 
-comparison["FY26"] = pd.to_numeric(
-    rainfall_df.iloc[4:, 4],
+months = date_col.dt.month_name().str[:3]
+
+monthly_rain = pd.DataFrame()
+
+monthly_rain["Month"] = months
+
+monthly_rain["FY27"] = pd.to_numeric(
+    rain_df.iloc[4:, 1],
     errors="coerce"
 )
 
-comparison["FY25"] = pd.to_numeric(
-    rainfall_df.iloc[4:, 6],
+monthly_rain["FY26"] = pd.to_numeric(
+    rain_df.iloc[4:, 3],
     errors="coerce"
 )
 
-comparison["FY24"] = pd.to_numeric(
-    rainfall_df.iloc[4:, 8],
+monthly_rain["FY25"] = pd.to_numeric(
+    rain_df.iloc[4:, 5],
     errors="coerce"
 )
 
-comparison["FY23"] = pd.to_numeric(
-    rainfall_df.iloc[4:, 10],
+monthly_rain["FY24"] = pd.to_numeric(
+    rain_df.iloc[4:, 7],
     errors="coerce"
+)
+
+monthly_rain["FY23"] = pd.to_numeric(
+    rain_df.iloc[4:, 9],
+    errors="coerce"
+)
+
+rain_chart = monthly_rain.groupby(
+    "Month"
+).sum()
+
+month_order = [
+    "Jan","Feb","Mar","Apr","May","Jun",
+    "Jul","Aug","Sep","Oct","Nov","Dec"
+]
+
+rain_chart = rain_chart.reindex(
+    month_order
 )
 
 st.line_chart(
-    comparison.fillna(0)
+    rain_chart
 )
 
 st.divider()
 
-# Withdrawal Comparison
+# ==============================
+# WITHDRAWAL COMPARISON
+# ==============================
 
-st.subheader(
-    "Withdrawal FY Comparison"
-)
+st.subheader("💦 Monthly Withdrawal Comparison")
 
-withdrawal_df = pd.read_excel(
-    "data/rainfall_withdrawal.xlsx",
+with_df = pd.read_excel(
+    "rainfall_withdrawal.xlsx",
     sheet_name=1,
     header=None
 )
 
-comparison2 = pd.DataFrame()
-
-comparison2["FY23"] = pd.to_numeric(
-    withdrawal_df.iloc[2:, 1],
+date_col = pd.to_datetime(
+    with_df.iloc[2:, 0],
+    unit="D",
+    origin="1899-12-30",
     errors="coerce"
 )
 
-comparison2["FY24"] = pd.to_numeric(
-    withdrawal_df.iloc[2:, 2],
+months = date_col.dt.month_name().str[:3]
+
+monthly_with = pd.DataFrame()
+
+monthly_with["Month"] = months
+
+monthly_with["FY23"] = pd.to_numeric(
+    with_df.iloc[2:, 1],
     errors="coerce"
 )
 
-comparison2["FY25"] = pd.to_numeric(
-    withdrawal_df.iloc[2:, 3],
-    errors="coerce"
-)
-
-comparison2["FY26"] = pd.to_numeric(
-    withdrawal_df.iloc[2:, 4],
-    errors="coerce"
-)
-
-comparison2["FY27"] = pd.to_numeric(
-    withdrawal_df.iloc[2:, 5],
-    errors="coerce"
-)
-
-st.line_chart(
-    comparison2.fillna(0)
-)
+monthly_with["FY24"] = pd.to_numeric(
+    with_df.iloc[2:, 2],
+    errors
