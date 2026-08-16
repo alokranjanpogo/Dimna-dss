@@ -17,6 +17,7 @@ from utils.calculations import (
     get_available_storage,
     get_withdrawal_potential,
     get_buffer_ft,
+    get_season,
     withdrawal_allowed
 )
 
@@ -181,6 +182,9 @@ except:
 alert = get_alert(
     live_level
 )
+season = get_season(
+    date.today()
+)
 
 # ==================================================
 # KPI CARDS
@@ -246,10 +250,9 @@ with k5:
 with k6:
 
     st.metric(
-        "Status",
-        status
+        "Season",
+        season
     )
-
 st.divider()
 
 # ==================================================
@@ -265,6 +268,8 @@ if allowed:
     st.success(
         f"""
 ### ✅ WITHDRAWAL ALLOWED
+
+Season : {season}
 
 Current Level : {live_level:.2f} ft
 
