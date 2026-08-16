@@ -1,7 +1,10 @@
 import streamlit as st
 import gspread
 import pandas as pd
+import ast
+
 from google.oauth2.service_account import Credentials
+
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -12,11 +15,18 @@ SCOPES = [
 @st.cache_resource
 def connect_sheet():
 
-    # TEMPORARY DEBUG
-    st.write("Available Secrets:", dict(st.secrets))
+    secret_data = st.secrets["gcp_service_account"]
+
+    # Handle if secrets loaded as string
+    if isinstance(secret_data, str):
+        service_account_info = ast.literal_eval(
+            secret_data
+        )
+    else:
+        service_account_info = secret_data
 
     creds = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
+        service_account_info,
         scopes=SCOPES
     )
 
@@ -74,3 +84,22 @@ def get_latest_record():
         return None
 
     return df.iloc[-1]
+
+
+def test_connection():
+
+    try:
+
+        workbook = connect_sheet()
+
+        return (
+            True,
+            f"Connected to: {workbook.title}"
+        )
+
+    except Exception as e:
+
+        return (
+            False,
+            str(e)
+        )
