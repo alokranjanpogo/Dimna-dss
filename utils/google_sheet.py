@@ -3,7 +3,6 @@ import gspread
 import pandas as pd
 from google.oauth2.service_account import Credentials
 
-
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
@@ -37,7 +36,7 @@ def get_daily_sheet():
 
 
 def add_daily_record(
-    date,
+    entry_date,
     level,
     withdrawal,
     rainfall,
@@ -47,7 +46,7 @@ def add_daily_record(
     sheet = get_daily_sheet()
 
     sheet.append_row([
-        str(date),
+        str(entry_date),
         level,
         withdrawal,
         rainfall,
