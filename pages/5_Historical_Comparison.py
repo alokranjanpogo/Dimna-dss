@@ -149,84 +149,102 @@ if not filtered_rain.empty:
 st.divider()
 
 # =====================================
-# WITHDRAWAL
+# WITHDRAWAL OUTPUT
 # =====================================
 
-st.subheader("💦 Withdrawal Comparison")
-st.caption("Unit : MLD")
+if len(selected_months) == 12:
 
-withdraw_df = pd.read_excel(
-    FILE_PATH,
-    sheet_name=1,
-    header=None
-)
-
-withdraw_columns = {
-    "FY23": 1,
-    "FY24": 2,
-    "FY25": 3,
-    "FY26": 4,
-    "FY27": 5
-}
-
-withdraw_chart = pd.DataFrame(
-    index=MONTHS
-)
-
-for fy in selected_fys:
-
-    if fy not in AVAILABLE_FY:
-
-        st.warning(
-            f"{fy} : NA - Withdrawal Data Not Available"
-        )
-
-        continue
-
-    values = pd.to_numeric(
-        withdraw_df.iloc[2:, withdraw_columns[fy]],
-        errors="coerce"
-    ).fillna(0)
-
-    monthly_values = []
-
-    chunk_size = max(
-        int(len(values) / 12),
-        1
+    st.line_chart(
+        withdraw_chart
     )
 
-    for i in range(12):
-
-        start = i * chunk_size
-        end = start + chunk_size
-
-        monthly_values.append(
-            round(
-                values.iloc[start:end].mean(),
-                2
-            )
-        )
-
-    withdraw_chart[fy] = monthly_values
-
-filtered_withdraw = withdraw_chart.loc[
-    selected_months
-]
-
-st.line_chart(
-    filtered_withdraw
-)
-
-# =====================================
-# WITHDRAWAL SUMMARY
-# =====================================
-
-st.write("### Withdrawal Summary")
-
-if not filtered_withdraw.empty:
+    st.write("### Withdrawal Summary")
 
     st.dataframe(
-        filtered_withdraw.mean().to_frame(
+        withdraw_chart.mean().to_frame(
             "Average Withdrawal (MLD)"
         )
     )
+
+else:
+
+    st.subheader(
+        "📅 Date-wise Withdrawal Data"
+    )
+
+    st.info(
+        "Showing date-wise withdrawal records for selected month(s)."
+    )
+
+    dates = pd.to_datetime(
+        pd.to_numeric(
+            withdraw_df.iloc[2:, 0],
+            errors="coerce"
+        ),
+        unit="D",
+        origin="1899-12-30",
+        errors="coerce"
+    )
+
+    raw_withdraw = pd.DataFrame()
+
+    raw_withdraw["Date"] = dates
+
+    selected_fy = selected_fys[0]
+
+    raw_withdraw["Withdrawal_MLD"] = pd.to_numeric(
+        withdraw_df.iloc[
+            2:,
+            withdraw_columns[selected_fy]
+        ],
+        errors="coerce"
+    )
+
+    raw_withdraw = raw_withdraw.dropna()
+
+    raw_withdraw["Month"] = (
+        raw_withdraw["Date"]
+        .dt.strftime("%b")
+    )
+
+    filtered_daily = raw_withdraw[
+        raw_withdraw["Month"].isin(
+            selected_months
+        )
+    ]
+
+    st.dataframe(
+        filtered_daily,
+        use_container_width=True
+    )
+
+    st.line_chart(
+        filtered_daily.set_index(
+            "Date"
+        )[
+            ["Withdrawal_MLD"]
+        ]
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+
+        st.metric(
+            "Average Withdrawal",
+            f"{filtered_daily['Withdrawal_MLD'].mean():.0f} MLD"
+        )
+
+    with c2:
+
+        st.metric(
+            "Maximum Withdrawal",
+            f"{filtered_daily['Withdrawal_MLD'].max():.0f} MLD"
+        )
+
+    with c3:
+
+        st.metric(
+            "Minimum Withdrawal",
+            f"{filtered_daily['Withdrawal_MLD'].min():.0f} MLD"
+        )
